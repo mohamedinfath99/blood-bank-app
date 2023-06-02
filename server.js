@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const morgan = require('morgan');
 const cors = require('cors');
 const colors = require('colors');
+const connectDB = require('./config/db')
 
 // Dotenv Config
 dotenv.config();
@@ -26,5 +27,6 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
+    connectDB();
     console.log(`Node server is running in the ${process.env.DEV_MODE} mode & port number is ${process.env.PORT}!`.bgCyan.bgMagenta);
 })
