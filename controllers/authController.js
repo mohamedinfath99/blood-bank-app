@@ -1,5 +1,6 @@
 const users = require('../models/userSchema');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 
 const createUserController = async (req, res) => {
@@ -10,8 +11,8 @@ const createUserController = async (req, res) => {
         if (existingUser) {
             return res.status(200).send({
                 status: false,
-                message: "You have already user account so go to loging page"
-            })
+                message: "You have already user account so go to login page"
+            });
         };
 
         const salt = await bcrypt.genSalt(10);
@@ -25,7 +26,7 @@ const createUserController = async (req, res) => {
             status: true,
             message: "User succesfully created",
             createUser
-        })
+        });
 
     }
     catch (error) {
@@ -35,8 +36,51 @@ const createUserController = async (req, res) => {
             status: false,
             message: "Error in the create new user",
             error
-        })
+        });
     }
 };
 
-module.exports = { createUserController };
+
+const loginUserController = async (req, res) => {
+    try {
+
+        const user = await users.findOne({ email: req.body.email });
+
+        if (!user) {
+            return res.status(200).send({
+                status: false,
+                message: "User is not found, So please go to registration page"
+            });
+        };
+
+        const comparePassword = await bcrypt.compare(req.body.password, user.password)
+
+        if (!comparePassword) {
+            return res.status(200).send({
+                status: false,
+                message: "Password || gmail is wrong"
+            });
+        };
+
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_KEY, { expiresIn: '1d' });
+
+        res.status(200).send({
+            status: true,
+            message: "User is succesfully login",
+            token,
+            user
+        });
+    }
+    catch (error) {
+        console.log(error);
+
+        res.status(500).send({
+            status: false,
+            message: "Error in the user login",
+            error
+        });
+    }
+
+};
+
+module.exports = { createUserController, loginUserController };
