@@ -3,7 +3,8 @@ const dotenv = require('dotenv');
 const morgan = require('morgan');
 const cors = require('cors');
 const colors = require('colors');
-const connectDB = require('./config/db')
+const connectDB = require('./config/db');
+const authRoute = require('./routes/authRoute');
 
 // Dotenv Config
 dotenv.config();
@@ -21,7 +22,9 @@ app.use(cors())
 // Test Route
 app.get('/', (req, res) => {
     res.status(200).send("succes")
-})
+});
+
+app.use('/api/v1/auth', authRoute);
 
 // Port
 const PORT = process.env.PORT;
