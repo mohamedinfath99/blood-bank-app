@@ -10,7 +10,7 @@ const createUserController = async (req, res) => {
 
         if (existingUser) {
             return res.status(200).send({
-                status: false,
+                success: false,
                 message: "You have already user account so go to login page"
             });
         };
@@ -23,7 +23,7 @@ const createUserController = async (req, res) => {
         const createUser = await userData.save();
 
         res.status(201).send({
-            status: true,
+            success: true,
             message: "User succesfully created",
             createUser
         });
@@ -33,7 +33,7 @@ const createUserController = async (req, res) => {
         console.log(error);
 
         res.status(500).send({
-            status: false,
+            success: false,
             message: "Error in the create new user",
             error
         });
@@ -48,7 +48,7 @@ const loginUserController = async (req, res) => {
 
         if (!user) {
             return res.status(200).send({
-                status: false,
+                success: false,
                 message: "User is not found, So please go to registration page"
             });
         };
@@ -57,7 +57,7 @@ const loginUserController = async (req, res) => {
 
         if (!comparePassword) {
             return res.status(200).send({
-                status: false,
+                success: false,
                 message: "Password || gmail is wrong"
             });
         };
@@ -65,7 +65,7 @@ const loginUserController = async (req, res) => {
         const token = jwt.sign({ userId: user._id }, process.env.JWT_KEY, { expiresIn: '1d' });
 
         res.status(200).send({
-            status: true,
+            success: true,
             message: "User is succesfully login",
             token,
             user
@@ -75,7 +75,7 @@ const loginUserController = async (req, res) => {
         console.log(error);
 
         res.status(500).send({
-            status: false,
+            success: false,
             message: "Error in the user login",
             error
         });
